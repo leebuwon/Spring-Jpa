@@ -1,14 +1,13 @@
 package jpabook.JpaShop.domain.member.service;
 
-import jpabook.JpaShop.api.member.dto.request.UpdateMemberRequest;
 import jpabook.JpaShop.domain.member.entity.Member;
 import jpabook.JpaShop.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,12 +45,17 @@ public class MemberService {
     }
 
     public Member findOne(Long memberId){
-        return memberRepository.find(memberId);
+        return getMember(memberId);
     }
 
     @Transactional
     public void update(Long id, String name) {
-        Member member = memberRepository.find(id);
+        Member member = getMember(id);
         member.setName(name);
+    }
+
+    private Member getMember(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("아이디가 없어!"));
     }
 }

@@ -38,3 +38,7 @@ out/
 
 ### yml - gitignore 연습 ###
 application.yml
+
+
+### generated 추가
+/src/main/generated/

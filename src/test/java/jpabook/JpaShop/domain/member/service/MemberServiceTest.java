@@ -1,12 +1,10 @@
 package jpabook.JpaShop.domain.member.service;
 
 import jpabook.JpaShop.domain.member.entity.Member;
-import jpabook.JpaShop.domain.member.repository.MemberRepository;
-import org.junit.jupiter.api.Assertions;
+import jpabook.JpaShop.domain.member.repository.MemberRepositoryOld;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,7 +17,7 @@ class MemberServiceTest {
     MemberService memberService;
 
     @Autowired
-    MemberRepository memberRepository;
+    MemberRepositoryOld memberRepository;
 
     @Test
     public void join() throws Exception {

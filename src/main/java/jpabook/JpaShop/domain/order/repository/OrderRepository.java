@@ -1,11 +1,16 @@
 package jpabook.JpaShop.domain.order.repository;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import jpabook.JpaShop.api.order.dto.SimpleOrderQueryDto;
+import jpabook.JpaShop.domain.member.entity.QMember;
 import jpabook.JpaShop.domain.order.entity.Order;
 import jpabook.JpaShop.domain.order.entity.OrderSearch;
+import jpabook.JpaShop.domain.order.entity.OrderStatus;
+import jpabook.JpaShop.domain.order.entity.QOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -26,10 +31,10 @@ public class OrderRepository {
         return em.find(Order.class, orderId);
     }
 
-    public List<Order> findAll(OrderSearch orderSearch){
-        return em.createQuery("select o from Order o join o.member m", Order.class)
-                .getResultList();
-    }
+//    public List<Order> findAll(OrderSearch orderSearch){
+//        return em.createQuery("select o from Order o join o.member m", Order.class)
+//                .getResultList();
+//    }
 
     /**
      * JPA Criteria
@@ -60,6 +65,34 @@ public class OrderRepository {
         return query.getResultList();
     }
 
+    public List<Order> findAll(OrderSearch orderSearch){
+        JPAQueryFactory query = new JPAQueryFactory(em);
+        QOrder order = QOrder.order;
+        QMember member = QMember.member;
+
+        return query.selectFrom(order)
+                .from(order)
+                .join(order.member, member)
+                .where(statusEq(orderSearch.getOrderStatus()), nameLike(orderSearch.getMemberName())) // where문에 메시지를 전달해줘서 결과만 반환받음
+                .limit(1000)
+                .fetch();
+    }
+
+    private static BooleanExpression nameLike(String memberName) {
+        if (!StringUtils.hasText(memberName)){
+            return null;
+        }
+        return QMember.member.name.like(memberName);
+    }
+
+    // 동적쿼리
+    private BooleanExpression statusEq(OrderStatus status){
+        if (status == null){
+            return null;
+        }
+        return QOrder.order.status.eq(status);
+    }
+
     public List<Order> findAllWithMemberAndDelivery() {
         List<Order> query = em.createQuery(
                 "select o from Order o" +
@@ -76,7 +109,7 @@ public class OrderRepository {
                         " join fetch  o.delivery d" +
                         " join fetch o.orderItemList oi" +
                         " join fetch oi.item i", Order.class)
-                .setFirstResult(1)
+                .setFirstResult(0)
                 .setMaxResults(100)
                 .getResultList();
     }

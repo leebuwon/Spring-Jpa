@@ -4,11 +4,10 @@ import jpabook.JpaShop.domain.delivery.Delivery;
 import jpabook.JpaShop.domain.item.entity.Item;
 import jpabook.JpaShop.domain.item.repository.ItemRepository;
 import jpabook.JpaShop.domain.member.entity.Member;
-import jpabook.JpaShop.domain.member.repository.MemberRepository;
+import jpabook.JpaShop.domain.member.repository.MemberRepositoryOld;
 import jpabook.JpaShop.domain.order.entity.Order;
 import jpabook.JpaShop.domain.order.entity.OrderSearch;
 import jpabook.JpaShop.domain.order.repository.OrderRepository;
-import jpabook.JpaShop.domain.order.repository.orderSimpleQuery.OrderSimpleQueryRepository;
 import jpabook.JpaShop.domain.orderItem.entity.OrderItem;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,7 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final MemberRepository memberRepository;
+    private final MemberRepositoryOld memberRepository;
     private final ItemRepository itemRepository;
 
     /**
@@ -57,6 +56,6 @@ public class OrderService {
     }
 
     public List<Order> findOrder(OrderSearch orderSearch){
-        return orderRepository.findAllByCriteria(orderSearch);
+        return orderRepository.findAll(orderSearch);
     }
 }
