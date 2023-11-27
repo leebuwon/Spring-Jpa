@@ -67,4 +67,28 @@ public class OrderRepository {
                         " join fetch o.delivery", Order.class).getResultList();
         return query;
     }
+
+    // fetch join 에서 1 : N 을 페이징하면 페이징이 되지 않는다..(가장 큰 단점)
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                "select distinct o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch  o.delivery d" +
+                        " join fetch o.orderItemList oi" +
+                        " join fetch oi.item i", Order.class)
+                .setFirstResult(1)
+                .setMaxResults(100)
+                .getResultList();
+    }
+
+    public List<Order> findAllWithMemberAndDeliveryPage(int offset, int limit) {
+        List<Order> query = em.createQuery(
+                "select o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+        return query;
+    }
 }
